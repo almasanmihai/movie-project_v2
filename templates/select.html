@@ -1,0 +1,34 @@
+{% extends 'bootstrap/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block styles %}
+{{ super() }}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,700">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+{% endblock %}
+
+{% block title %}Select Movie{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if lenght == 0: %}
+    <h1 class="heading">Your search return no results.</h1>
+    <div class="container text-center add">
+        <a href="{{ url_for('add') }}" class="button">Search Again</a>
+    </div>
+    {% else: %}
+    <h1 class="heading">Select Movie</h1>
+    {% endif %}
+
+
+    {% for i in range(lenght): %}
+    <p>
+        <a href="{{ url_for('select', title=titles[i]['title'], year=titles[i]['release_date'], description=titles[i]['overview'], rating=titles[i]['vote_average'], img_url=titles[i]['backdrop_path']) }}">
+            {{ titles[i]['title'] }} - Release date: {{ titles[i]['release_date'] }}</a>
+    </p>
+    {% endfor %}
+
+</div>
+{% endblock %}
+
