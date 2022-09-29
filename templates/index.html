@@ -16,104 +16,36 @@
 </header>
 <!-- Main Content-->
 
-    {% for movie in movies: %}
-    {% if movie.ranking <= 10: %}
-    <div class="card">
-        <div class="front" style="background-image: url('{{ movie.img_url }}');">
-            <p class="large">{{ movie.ranking }}</p>
-        </div>
-        <div class="back">
-            <div>
-                <div class="title">{{ movie.title }} <span class="release_date">({{ movie.year }})</span></div>
-                <div class="rating">
-                    <label>{{ movie.rating }}</label>
-                    <i class="fas fa-star star"></i>
-                </div>
-                <p class="review">"{{ movie.review }}"</p>
-                <p class="overview">
-                    {{ movie.description }}
-                </p>
-
-                <a href="{{ url_for('edit', id=movie.id) }}" class="btn btn-primary btn-sm">Update</a>
-                <a href="{{ url_for('delete', dele=movie.id) }}" class="btn btn-danger btn-sm">Delete</a>
-
+{% for movie in movies: %}
+{% if movie.ranking <= 10: %}
+<div class="card">
+    <div class="front" style="background-image: url('{{ movie.img_url }}');">
+        <p class="large">{{ movie.ranking }}</p>
+    </div>
+    <div class="back">
+        <div>
+            <div class="title">{{ movie.title }} <span class="release_date">({{ movie.year }})</span></div>
+            <div class="rating">
+                <label>{{ movie.rating }}</label>
+                <i class="fas fa-star star"></i>
             </div>
+            <p class="review">"{{ movie.review }}"</p>
+            <p class="overview">
+                {{ movie.description }}
+            </p>
+
+            <a href="{{ url_for('edit', id=movie.id) }}" class="btn btn-primary btn-sm">Update</a>
+            <a href="{{ url_for('delete', dele=movie.id) }}" class="btn btn-danger btn-sm">Delete</a>
+
         </div>
     </div>
-    {% endif %}
-    {% endfor %}
+</div>
+{% endif %}
+{% endfor %}
 
 </div>
 <div class="container text-center add">
     <a href="{{ url_for('add') }}" class="btn btn-primary">Add Movie</a>
 </div>
-
-
-
-<!--<div class="container px-4 px-lg-5">-->
-<!--    <div class="row gx-4 gx-lg-5 justify-content-center">-->
-<!--        <div class="col-md-10 col-lg-8 col-xl-7">-->
-<!--            &lt;!&ndash; Post preview&ndash;&gt;-->
-<!--            <div class="post-preview">-->
-<!--                <a href="post.html">-->
-<!--                    <h2 class="post-title">Man must explore, and this is exploration at its greatest</h2>-->
-<!--                    <h3 class="post-subtitle">Problems look mighty small from 150 miles up</h3>-->
-<!--                </a>-->
-<!--                <p class="post-meta">-->
-<!--                    Posted by-->
-<!--                    <a href="#!">Start Bootstrap</a>-->
-<!--                    on September 24, 2022-->
-<!--                </p>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; Divider&ndash;&gt;-->
-<!--            <hr class="my-4"/>-->
-<!--            &lt;!&ndash; Post preview&ndash;&gt;-->
-<!--            <div class="post-preview">-->
-<!--                <a href="post.html"><h2 class="post-title">I believe every human has a finite number of heartbeats. I-->
-<!--                    don't intend to waste any of mine.</h2></a>-->
-<!--                <p class="post-meta">-->
-<!--                    Posted by-->
-<!--                    <a href="#!">Start Bootstrap</a>-->
-<!--                    on September 18, 2022-->
-<!--                </p>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; Divider&ndash;&gt;-->
-<!--            <hr class="my-4"/>-->
-<!--            &lt;!&ndash; Post preview&ndash;&gt;-->
-<!--            <div class="post-preview">-->
-<!--                <a href="post.html">-->
-<!--                    <h2 class="post-title">Science has not yet mastered prophecy</h2>-->
-<!--                    <h3 class="post-subtitle">We predict too much for the next year and yet far too little for the next-->
-<!--                        ten.</h3>-->
-<!--                </a>-->
-<!--                <p class="post-meta">-->
-<!--                    Posted by-->
-<!--                    <a href="#!">Start Bootstrap</a>-->
-<!--                    on August 24, 2022-->
-<!--                </p>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; Divider&ndash;&gt;-->
-<!--            <hr class="my-4"/>-->
-<!--            &lt;!&ndash; Post preview&ndash;&gt;-->
-<!--            <div class="post-preview">-->
-<!--                <a href="post.html">-->
-<!--                    <h2 class="post-title">Failure is not an option</h2>-->
-<!--                    <h3 class="post-subtitle">Many say exploration is part of our destiny, but it’s actually our duty to-->
-<!--                        future generations.</h3>-->
-<!--                </a>-->
-<!--                <p class="post-meta">-->
-<!--                    Posted by-->
-<!--                    <a href="#!">Start Bootstrap</a>-->
-<!--                    on July 8, 2022-->
-<!--                </p>-->
-<!--            </div>-->
-<!--            &lt;!&ndash; Divider&ndash;&gt;-->
-<!--            <hr class="my-4"/>-->
-<!--            &lt;!&ndash; Pager&ndash;&gt;-->
-<!--            <div class="d-flex justify-content-end mb-4"><a class="btn btn-primary text-uppercase" href="#!">Older Posts-->
-<!--                →</a></div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
 
 {% include "footer.html" %}

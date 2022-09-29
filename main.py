@@ -1,12 +1,11 @@
 from flask import Flask, render_template, redirect, url_for, request
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
 import requests
 from secret import key, token
+from forms import LoginForm, RegisterForm, RatingForm, AddForm
 
+# --------------TMDB-------------------
 TMDB_API_KEY = key
 TMDB_BEARER_TOKEN = token
 
@@ -14,9 +13,11 @@ header = {
     'Authorization': f'Bearer {TMDB_BEARER_TOKEN}',
     'Content-Type': 'application/json;charset=utf-8',
 }
+# ---------------------------------------
+
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = 'VdecUOFg9_zn9h4rtVCnGg'
 Bootstrap(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///movies-collection.db"
@@ -38,17 +39,6 @@ class Movie(db.Model):
 # db.create_all()
 
 
-class RatingForm(FlaskForm):
-    rating = StringField('Your rating out of 10 e.g. 7.5:', validators=[DataRequired()])
-    review = StringField('Your review:', validators=[DataRequired()])
-    submit = SubmitField('Submit')
-
-
-class AddForm(FlaskForm):
-    title = StringField('Movie title', validators=[DataRequired()])
-    submit = SubmitField('Submit')
-
-
 @app.route("/")
 def home():
     all_movies = Movie.query.order_by(Movie.rating).all()
@@ -56,6 +46,27 @@ def home():
         all_movies[i].ranking = len(all_movies) - i
     db.session.commit()
     return render_template("index.html", movies=all_movies)
+
+
+@app.route("/login")
+def login():
+    form = LoginForm()
+    return render_template("login.html", form=form)
+
+
+@app.route("/register", methods=['POST', 'GET'])
+def register():
+    form = RegisterForm()
+    return render_template("register.html", form=form)
+
+@app.route("/contact", methods=['GET', 'POST'])
+def contact():
+    return render_template("contact.html")
+
+@app.route("/logout")
+def logout():
+    pass
+    return redirect(url_for('home'))
 
 
 @app.route("/add", methods=['GET', 'POST'])

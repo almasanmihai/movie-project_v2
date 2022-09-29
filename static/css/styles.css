@@ -11129,7 +11129,7 @@ header.masthead:before {
 header.masthead .page-heading,
 header.masthead .post-heading,
 header.masthead .site-heading {
-  color: #fff;
+  color: #ffffff;
 }
 header.masthead .page-heading,
 header.masthead .site-heading {
@@ -11180,7 +11180,7 @@ header.masthead .post-heading .meta a {
   header.masthead .page-heading h1, header.masthead .page-heading .h1,
 header.masthead .site-heading h1,
 header.masthead .site-heading .h1 {
-    font-size: 5rem;
+    font-size: 3rem;
   }
   header.masthead .post-heading h1, header.masthead .post-heading .h1 {
     font-size: 3.5rem;
