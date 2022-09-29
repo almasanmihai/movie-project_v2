@@ -25,6 +25,7 @@ db = SQLAlchemy(app)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
+# --------------Db-------------------
 class Movie(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80), unique=True, nullable=True)
@@ -38,6 +39,7 @@ class Movie(db.Model):
 
 # db.create_all()
 
+# ---------------------------------------
 
 @app.route("/")
 def home():
@@ -59,9 +61,11 @@ def register():
     form = RegisterForm()
     return render_template("register.html", form=form)
 
+
 @app.route("/contact", methods=['GET', 'POST'])
 def contact():
     return render_template("contact.html")
+
 
 @app.route("/logout")
 def logout():
@@ -101,7 +105,7 @@ def edit(id):
 
 @app.route("/delete")
 def delete():
-    movie_id = request.args.get("dele")
+    movie_id = request.args.get("item_to_delete")
     movie_to_delete = Movie.query.get(movie_id)
     db.session.delete(movie_to_delete)
     db.session.commit()
@@ -144,7 +148,7 @@ def select():
                 rating=rating,
                 ranking=7,
                 review="Picture not found",
-                img_url='/static/img/404.jpg'
+                img_url='https://images.unsplash.com/photo-1578328819058-b69f3a3b0f6b?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80'
             )
             db.session.add(new_movie2)
             db.session.commit()

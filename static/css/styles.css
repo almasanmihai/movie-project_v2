@@ -11305,12 +11305,13 @@ header.masthead .site-heading .h1 {
 	 margin: 1rem auto;
 	 position: relative;
 }
- @media screen and (max-width: 800px) {
+
+ @media screen and (max-width: 1000px) {
 	 .card {
-		 width: calc(50% - 3rem);
+		 width: calc(70% - 3rem);
 	}
 }
- @media screen and (max-width: 500px) {
+ @media screen and (max-width: 600px) {
 	 .card {
 		 width: 100%;
 	}

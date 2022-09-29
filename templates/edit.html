@@ -1,22 +1,21 @@
-{% extends 'bootstrap/base.html' %}
+{% include "header.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block styles %}
-{{ super() }}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,700">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-{% endblock %}
+<header class="masthead"
+        style="background-image: url({{ movie.img_url }})">
+    <div class="overlay"></div>
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="page-heading">
+                    <h1>Edit: "{{movie.title}}"</h1>
+                    <span class="subheading">Enter your review and change the rating</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
 
-{% block title %}Edit Movies{% endblock %}
-
-{% block content %}
 <div class="content">
-    <h1 class="heading">Movie Title</h1>
-    <p class="description">Edit Movie Rating</p>
+    {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
 </div>
-
-<div class="content">
-    {{ wtf.quick_form(form, novalidate=True) }}
-</div>
-{% endblock %}
