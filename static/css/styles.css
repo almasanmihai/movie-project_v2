@@ -11446,3 +11446,13 @@ header.masthead .site-heading .h1 {
  .release_date {
 	 font-weight: normal;
 }
+
+#submit {
+    margin-top: 10px;
+    margin-bottom: 50px;
+}
+
+.form-control {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

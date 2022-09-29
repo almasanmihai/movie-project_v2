@@ -2,25 +2,26 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 
-  <!-- Page Header -->
-  <header class="masthead" style="background-image: url('https://images.unsplash.com/photo-1547190027-9156686aa2f0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')">
+<!-- Page Header -->
+<header class="masthead"
+        style="background-image: url('https://images.unsplash.com/photo-1547190027-9156686aa2f0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')">
     <div class="overlay"></div>
     <div class="container position-relative px-4 px-lg-5">
-      <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
-          <div class="page-heading">
-            <h1>Log In</h1>
-            <span class="subheading">Welcome Back!</span>
-          </div>
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="page-heading">
+                    <h1>Log In</h1>
+                    <span class="subheading">Welcome Back!</span>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </header>
+</header>
 
-  <div class="container">
+<div class="container">
     <div class="row">
-      <div class="col-lg-8 col-md-10 mx-auto content">
-        {% with messages = get_flashed_messages() %}
+        <div class="col-lg-8 col-md-10 mx-auto content">
+            {% with messages = get_flashed_messages() %}
             {% if messages %}
             {% for message in messages %}
             <p>{{ message }}</p>
@@ -28,10 +29,10 @@
             {% endif %}
             {% endwith %}
 
-        {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
-      </div>
+            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
+        </div>
     </div>
-  </div>
+</div>
 
 
 {% include "footer.html" %}

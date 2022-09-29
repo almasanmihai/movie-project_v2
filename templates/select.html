@@ -1,29 +1,37 @@
-{% extends 'bootstrap/base.html' %}
+{% include "header.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block styles %}
-{{ super() }}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,700">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
-<link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-{% endblock %}
 
-{% block title %}Select Movie{% endblock %}
+<header class="masthead"
+        style="background-image: url('https://images.unsplash.com/photo-1516031190212-da133013de50?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')">
+    <div class="overlay"></div>
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <div class="page-heading">
+                    <h1>Search results</h1>
+                    <span class="subheading">Pick a title from below</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
 
 {% block content %}
 <div class="container">
     {% if lenght == 0: %}
-    <h1 class="heading">Your search return no results.</h1>
+    <h1 class="masthead">Your search return no results.</h1>
     <div class="container text-center add">
-        <a href="{{ url_for('add') }}" class="button">Search Again</a>
+        <a href="{{ url_for('add') }}" class="btn btn-primary">Search Again</a>
     </div>
     {% else: %}
-    <h1 class="heading">Select Movie</h1>
+    <h1 class="masthead">Select Movie</h1>
     {% endif %}
 
 
     {% for i in range(lenght): %}
-    <p>
+    <p class="title">
         <a href="{{ url_for('select', title=titles[i]['title'], year=titles[i]['release_date'], description=titles[i]['overview'], rating=titles[i]['vote_average'], img_url=titles[i]['backdrop_path']) }}">
             {{ titles[i]['title'] }} - Release date: {{ titles[i]['release_date'] }}</a>
     </p>
@@ -31,4 +39,5 @@
 
 </div>
 {% endblock %}
+{% include "footer.html" %}
 
