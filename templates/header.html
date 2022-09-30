@@ -8,9 +8,12 @@
     <title>Movie Project v2</title>
 
     <!--Favicon-->
-    <link rel="apple-touch-icon" sizes="180x180" href="{{url_for('static', filename='assets/img/apple-touch-icon.png')}}">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{url_for('static', filename='assets/img/favicon-32x32.png')}}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{url_for('static', filename='assets/img/favicon-16x16.png')}}">
+    <link rel="apple-touch-icon" sizes="180x180"
+          href="{{url_for('static', filename='assets/img/apple-touch-icon.png')}}">
+    <link rel="icon" type="image/png" sizes="32x32"
+          href="{{url_for('static', filename='assets/img/favicon-32x32.png')}}">
+    <link rel="icon" type="image/png" sizes="16x16"
+          href="{{url_for('static', filename='assets/img/favicon-16x16.png')}}">
     <link rel="manifest" href="{{url_for('static', filename='assets/img/site.webmanifest')}}">
 
     <!-- Font Awesome icons (free version)-->
@@ -36,10 +39,18 @@
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ms-auto py-4 py-lg-0">
                 <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{url_for('home')}}">Home</a></li>
-                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{url_for('login')}}">Log In</a></li>
-                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{url_for('logout')}}">Log Out</a></li>
-                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{url_for('register')}}">Register</a></li>
-                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{url_for('contact')}}">Contact</a></li>
+                {% if not current_user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{url_for('login')}}">Log In</a>
+                </li>
+                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4"
+                                        href="{{url_for('register')}}">Register</a></li>
+                {% endif %}
+                {% if current_user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{url_for('logout')}}">Log Out</a>
+                </li>
+                {% endif %}
+                <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="{{url_for('contact')}}">Contact</a>
+                </li>
             </ul>
         </div>
     </div>

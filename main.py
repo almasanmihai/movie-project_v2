@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import requests
 from secret import key, token
 from forms import LoginForm, RegisterForm, RatingForm, AddForm
-from flask_login import UserMixin
+from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -23,12 +23,26 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'VdecUOFg9_zn9h4rtVCnGg'
 Bootstrap(app)
 
+# --------------Connect to db-------------------
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///movies-collection.db"
 db = SQLAlchemy(app)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+# ---------------------------------------
+
+# --------------Login manager-------------------
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 
-# --------------Db-------------------
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
+# ---------------------------------------
+
+
+# --------------Tables config-------------------
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
@@ -52,7 +66,7 @@ class Movie(db.Model):
     owner = relationship("User", back_populates='movies')
 
 
-db.create_all()
+# db.create_all()
 
 
 # ---------------------------------------
@@ -66,9 +80,21 @@ def home():
     return render_template("index.html", movies=all_movies)
 
 
-@app.route("/login")
+@app.route("/login", methods=['GET', 'POST'])
 def login():
     form = LoginForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if not user:
+            flash(f'User {form.email.data} does not exist. Please register instead.')
+            return redirect(url_for('register'))
+        elif not check_password_hash(user.password, form.password.data):
+            flash('Wrong password. Please try again.')
+            return redirect(url_for('login'))
+        else:
+            login_user(user)
+            flash(f'Welcome back {user.name}, to: ')
+            return redirect(url_for('home'))
     return render_template("login.html", form=form)
 
 
@@ -79,11 +105,17 @@ def register():
         new_email = form.email.data
         new_password = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=12)
         new_name = form.name.data
-        new_user = User(email=new_email, password=new_password, name=new_name)
-        db.session.add(new_user)
-        db.session.commit()
-        flash(f'Hi {new_user.name}! Welcome to: ')
-        return redirect(url_for('home'))
+        user_exists = User.query.filter_by(email=new_email).first()
+        if user_exists:
+            flash(f'User {new_email} exists. Login instead.')
+            return redirect(url_for('login'))
+        else:
+            new_user = User(email=new_email, password=new_password, name=new_name)
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user)
+            flash(f'Hi {new_user.name}! Welcome to: ')
+            return redirect(url_for('home'))
     return render_template("register.html", form=form)
 
 
@@ -93,8 +125,9 @@ def contact():
 
 
 @app.route("/logout")
+@login_required
 def logout():
-    pass
+    logout_user()
     return redirect(url_for('home'))
 
 
