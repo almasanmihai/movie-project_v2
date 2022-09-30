@@ -117,7 +117,7 @@ def register():
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user)
-            flash(f'Hi {new_user.name}! Welcome to: ')
+            flash(f'Hi {new_user.name}! Start by pressing Add Movie.')
             return redirect(url_for('home'))
     return render_template("register.html", form=form)
 
