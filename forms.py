@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField
-from wtforms.validators import DataRequired, Email
+from wtforms import StringField, SubmitField, PasswordField, FloatField
+from wtforms.validators import DataRequired, Email, NumberRange, Length
 
 
 ##WTForm
@@ -18,8 +18,8 @@ class LoginForm(FlaskForm):
 
 
 class RatingForm(FlaskForm):
-    rating = StringField('Your rating out of 10 e.g. 7.5:', validators=[DataRequired()])
-    review = StringField('Your review (max 30 char):', validators=[DataRequired()])
+    rating = FloatField('Your rating out of 10 e.g. 7.5:', validators=[NumberRange(min=0, max=10)])
+    review = StringField('Your review (max 30 char):', validators=[DataRequired(), Length(max=30)])
     submit = SubmitField('Submit')
 
 
