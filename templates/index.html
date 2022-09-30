@@ -3,6 +3,7 @@
 <!-- Page Header-->
 <header class="masthead"
         style="background-image: url('https://images.unsplash.com/photo-1535016120720-40c646be5580?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80')">
+    {% if current_user.is_authenticated %}
     <div class="container position-relative px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-5 col-lg-8 col-xl-7">
@@ -16,15 +17,36 @@
             {% endif %}
             {% endwith %}
               </span>
-                    <h1>My top 10 movies</h1>
-                    <span class="subheading">These are my all time favourite movies.</span>
+                    <h1>{{current_user.name}}'s top 10 movies.</h1>
                 </div>
             </div>
         </div>
     </div>
+    {% else %}
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-5 col-lg-8 col-xl-7">
+                <div class="site-heading">
+                    <span class="subheading">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+              </span>
+                    <h1>Make your top 10 movies</h1>
+                    <span class="subheading">To start, login or register.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </header>
-<!-- Main Content-->
 
+<!-- Main Content-->
+{% if current_user.is_authenticated %}
 {% for movie in movies: %}
 {% if movie.ranking <= 10: %}
 <div class="card">
@@ -56,5 +78,5 @@
 <div class="container text-center add">
     <a href="{{ url_for('add') }}" class="btn btn-primary">Add Movie</a>
 </div>
-
+{% endif %}
 {% include "footer.html" %}

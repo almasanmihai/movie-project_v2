@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import requests
 from secret import key, token
 from forms import LoginForm, RegisterForm, RatingForm, AddForm
-from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required
+from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -49,13 +49,13 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
     name = db.Column(db.String(100))
-    movies = relationship('Movie', back_populates="owner")
+    movie = relationship("Movie", back_populates="owner")
 
 
 class Movie(db.Model):
     __tablename__ = 'movies'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(80), unique=True, nullable=True)
+    title = db.Column(db.String(80), nullable=True)
     year = db.Column(db.Integer, unique=False, nullable=True)
     description = db.Column(db.String(120), unique=False, nullable=True)
     rating = db.Column(db.Float, unique=False, nullable=True)
@@ -63,21 +63,24 @@ class Movie(db.Model):
     review = db.Column(db.String(120), unique=False, nullable=True)
     img_url = db.Column(db.String(120), unique=False, nullable=True)
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    owner = relationship("User", back_populates='movies')
+    owner = relationship("User", back_populates='movie')
 
 
-# db.create_all()
+db.create_all()
 
 
 # ---------------------------------------
 
 @app.route("/")
 def home():
-    all_movies = Movie.query.order_by(Movie.rating).all()
-    for i in range(len(all_movies)):
-        all_movies[i].ranking = len(all_movies) - i
-    db.session.commit()
-    return render_template("index.html", movies=all_movies)
+    if current_user.is_authenticated:
+        all_movies = Movie.query.filter_by(owner_id=current_user.id).order_by(Movie.rating).all()
+        for i in range(len(all_movies)):
+            all_movies[i].ranking = len(all_movies) - i
+        db.session.commit()
+        return render_template("index.html", movies=all_movies)
+    else:
+        return render_template("index.html", movies=[])
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -93,7 +96,7 @@ def login():
             return redirect(url_for('login'))
         else:
             login_user(user)
-            flash(f'Welcome back {user.name}, to: ')
+            flash(f'Welcome back {user.name} ')
             return redirect(url_for('home'))
     return render_template("login.html", form=form)
 
@@ -179,12 +182,18 @@ def select():
         rating = float(request.args.get("rating"))
         img_url = f"https://image.tmdb.org/t/p/w500{request.args.get('img_url')}"
     except (ValueError, TypeError):
-        print('error')
+        flash(f'Something went wrong. The title you searched was not added to your top.')
         return redirect(url_for('home'))
     else:
-        title_exist = Movie.query.filter(Movie.title == title).first()
+        all_movies = Movie.query.filter_by(owner_id=current_user.id).all()
+        print(all_movies)
+        title_exist = False
+        for movie in all_movies:
+            if movie.title == title:
+                title_exist = True
         if title_exist:
             print(title_exist)
+            flash(f'{title} is already in your top.')
             return redirect(url_for('home'))
         elif year and title and description and rating and img_url:
             new_movie2 = Movie(
@@ -193,11 +202,13 @@ def select():
                 description=description,
                 rating=rating,
                 ranking=7,
-                review="None",
-                img_url=img_url
+                review="Your rating",
+                img_url=img_url,
+                owner=current_user
             )
             db.session.add(new_movie2)
             db.session.commit()
+            flash(f'Succes. {title} was added to your top.')
         else:
             new_movie2 = Movie(
                 title=title,
@@ -210,6 +221,7 @@ def select():
             )
             db.session.add(new_movie2)
             db.session.commit()
+            flash(f'Picture for {title} is not available.')
         return redirect(url_for('home'))
 
 
