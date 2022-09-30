@@ -1,9 +1,12 @@
-from flask import Flask, render_template, redirect, url_for, request
+from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 import requests
 from secret import key, token
 from forms import LoginForm, RegisterForm, RatingForm, AddForm
+from flask_login import UserMixin
+from sqlalchemy.orm import relationship
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # --------------TMDB-------------------
 TMDB_API_KEY = key
@@ -26,7 +29,17 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 # --------------Db-------------------
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(100), unique=True)
+    password = db.Column(db.String(100))
+    name = db.Column(db.String(100))
+    movies = relationship('Movie', back_populates="owner")
+
+
 class Movie(db.Model):
+    __tablename__ = 'movies'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(80), unique=True, nullable=True)
     year = db.Column(db.Integer, unique=False, nullable=True)
@@ -35,9 +48,12 @@ class Movie(db.Model):
     ranking = db.Column(db.Integer, unique=False, nullable=True)
     review = db.Column(db.String(120), unique=False, nullable=True)
     img_url = db.Column(db.String(120), unique=False, nullable=True)
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    owner = relationship("User", back_populates='movies')
 
 
-# db.create_all()
+db.create_all()
+
 
 # ---------------------------------------
 
@@ -59,6 +75,15 @@ def login():
 @app.route("/register", methods=['POST', 'GET'])
 def register():
     form = RegisterForm()
+    if form.validate_on_submit():
+        new_email = form.email.data
+        new_password = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=12)
+        new_name = form.name.data
+        new_user = User(email=new_email, password=new_password, name=new_name)
+        db.session.add(new_user)
+        db.session.commit()
+        flash(f'Hi {new_user.name}! Welcome to: ')
+        return redirect(url_for('home'))
     return render_template("register.html", form=form)
 
 

@@ -7,6 +7,15 @@
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-5 col-lg-8 col-xl-7">
                 <div class="site-heading">
+                    <span class="subheading">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+              </span>
                     <h1>My top 10 movies</h1>
                     <span class="subheading">These are my all time favourite movies.</span>
                 </div>
