@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
+from flask import Flask, render_template, redirect, url_for, request, flash, abort
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 import requests
@@ -7,6 +7,7 @@ from forms import LoginForm, RegisterForm, RatingForm, AddForm
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.exceptions import BadRequest
 
 # --------------TMDB-------------------
 TMDB_API_KEY = key
@@ -152,8 +153,16 @@ def add():
 @app.route("/edit/<id>", methods=['GET', 'POST'])
 def edit(id):
     form = RatingForm()
+    try:
+        test_id = int(id)
+    except ValueError:
+        return BadRequest()
     movie_id = id
     movie_to_update = Movie.query.get(movie_id)
+    owner_titles = Movie.query.filter_by(owner_id=current_user.id).all()
+    owner_titles_ids = [title.id for title in owner_titles]
+    if test_id not in owner_titles_ids:
+        return abort(403)
     if form.validate_on_submit():
         new_rating = form.rating.data
         new_review = form.review.data
@@ -226,3 +235,4 @@ def select():
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port='5000')
+    # app.run(debug=True)
