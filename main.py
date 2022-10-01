@@ -186,13 +186,11 @@ def select():
         return redirect(url_for('home'))
     else:
         all_movies = Movie.query.filter_by(owner_id=current_user.id).all()
-        print(all_movies)
         title_exist = False
         for movie in all_movies:
             if movie.title == title:
                 title_exist = True
         if title_exist:
-            print(title_exist)
             flash(f'{title} is already in your top.')
             return redirect(url_for('home'))
         elif year and title and description and rating and img_url:
@@ -227,4 +225,4 @@ def select():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port='5000', debug=True)
+    app.run(host="0.0.0.0", port='5000')

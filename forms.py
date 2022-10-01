@@ -25,4 +25,4 @@ class RatingForm(FlaskForm):
 
 class AddForm(FlaskForm):
     title = StringField('Movie title', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Search')
