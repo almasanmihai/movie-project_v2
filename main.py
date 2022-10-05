@@ -136,13 +136,14 @@ def logout():
 
 
 @app.route("/add", methods=['GET', 'POST'])
+@login_required
 def add():
     form = AddForm()
     if form.validate_on_submit():
         new_title = form.title.data
         query = {
             'api_key': TMDB_API_KEY,
-            'query': new_title,  # URI encoded
+            'query': new_title,
         }
         response = requests.get('https://api.themoviedb.org/3/search/movie', params=query, headers=header)
         t = response.json()['results']
@@ -151,6 +152,7 @@ def add():
 
 
 @app.route("/edit/<id>", methods=['GET', 'POST'])
+@login_required
 def edit(id):
     form = RatingForm()
     try:
@@ -174,6 +176,7 @@ def edit(id):
 
 
 @app.route("/delete")
+@login_required
 def delete():
     movie_id = request.args.get("item_to_delete")
     movie_to_delete = Movie.query.get(movie_id)
@@ -183,6 +186,7 @@ def delete():
 
 
 @app.route("/select")
+@login_required
 def select():
     try:
         year = int(request.args.get("year")[0:4])
@@ -234,5 +238,5 @@ def select():
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port='5000')
-    # app.run(debug=True)
+    # app.run(host="0.0.0.0", port='5000')
+    app.run(debug=True)
