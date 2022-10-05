@@ -76,12 +76,13 @@ class Movie(db.Model):
 def home():
     if current_user.is_authenticated:
         all_movies = Movie.query.filter_by(owner_id=current_user.id).order_by(Movie.rating).all()
+        lenght = len(all_movies)
         for i in range(len(all_movies)):
             all_movies[i].ranking = len(all_movies) - i
         db.session.commit()
-        return render_template("index.html", movies=all_movies)
+        return render_template("index.html", movies=all_movies, lenght=lenght)
     else:
-        return render_template("index.html", movies=[])
+        return render_template("index.html", movies=[], lenght=0)
 
 
 @app.route("/login", methods=['GET', 'POST'])

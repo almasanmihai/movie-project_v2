@@ -38,7 +38,7 @@
               </span>
                     <h1>Make your top 10 movies</h1>
                     <span class="subheading">To start, <a href="{{ url_for('login') }}" style="color:#2cfc03;">login</a> or <a
-                            href="{{ url_for('login') }}" style="color:#2cfc03;">register</a>.</span>
+                            href="{{ url_for('register') }}" style="color:#2cfc03;">register</a>.</span>
                 </div>
             </div>
         </div>
@@ -47,37 +47,91 @@
 </header>
 
 <!-- Main Content-->
-{% if current_user.is_authenticated %}
-{% for movie in movies: %}
-{% if movie.ranking <= 10: %}
-<div class="card">
-    <div class="front" style="background-image: url('{{ movie.img_url }}');">
-        <p class="large">{{ movie.ranking }}</p>
-    </div>
-    <div class="back">
-        <div>
-            <div class="title">{{ movie.title }} <span class="release_date">({{ movie.year }})</span></div>
-            <div class="rating">
-                <label>{{ movie.rating }}</label>
-                <i class="fas fa-star star"></i>
-            </div>
-            <p class="review">"{{ movie.review }}"</p>
-            <p class="overview">
-                {{ movie.description }}
-            </p>
-
-            <a href="{{ url_for('edit', id=movie.id) }}" class="btn btn-primary btn-sm">Update</a>
-            <a href="{{ url_for('delete', item_to_delete=movie.id) }}" class="btn btn-danger btn-sm">Delete</a>
-
+<div class="row">
+    {% if current_user.is_authenticated %}
+    {% if lenght > 0 %}
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="site-heading" style="text-align: center;padding-top: 10px;padding-bottom: 20px;">
+            <h1>Your Top:</h1>
         </div>
     </div>
-</div>
-{% endif %}
-{% endfor %}
+    {% endif %}
+    {% for movie in movies: %}
+    {% if movie.ranking <= 10: %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card">
+            <div class="front" style="background-image: url('{{ movie.img_url }}');">
+                <p class="large">{{ movie.ranking }}</p>
+            </div>
+            <div class="back">
+                <div>
+                    <div class="title">{{ movie.title }} <span class="release_date">({{ movie.year }})</span></div>
+                    <div class="rating">
+                        <label>{{ movie.rating }}</label>
+                        <i class="fas fa-star star"></i>
+                    </div>
+                    <p class="review">"{{ movie.review }}"</p>
+                    <p class="overview">
+                        {{ movie.description }}
+                    </p>
+
+                    <a href="{{ url_for('edit', id=movie.id) }}" class="btn btn-primary btn-sm">Update</a>
+                    <a href="{{ url_for('delete', item_to_delete=movie.id) }}" class="btn btn-danger btn-sm">Delete</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
 
 </div>
 <div class="container text-center add">
     <a href="{{ url_for('add') }}" class="btn btn-primary">Add Movie</a>
 </div>
-{% endif %}
-{% include "footer.html" %}
+
+
+{% if lenght > 10 %}
+<hr>
+<div class="row">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="site-heading" style="text-align: center;padding-top: 50px;padding-bottom: 20px;">
+            <h3>Other titles you like</h3>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    {% if current_user.is_authenticated %}
+    {% for movie in movies: %}
+    {% if movie.ranking > 10: %}
+    <div class="col-md-6 col-lg-4">
+        <div class="card">
+            <div class="front" style="background-image: url('{{ movie.img_url }}');">
+                <!--            <p class="large">{{ movie.ranking }}</p>-->
+            </div>
+            <div class="back">
+                <div>
+                    <div class="title">{{ movie.title }} <span class="release_date">({{ movie.year }})</span></div>
+                    <div class="rating">
+                        <label>{{ movie.rating }}</label>
+                        <i class="fas fa-star star"></i>
+                    </div>
+                    <p class="review">"{{ movie.review }}"</p>
+                    <p class="overview">
+                        {{ movie.description }}
+                    </p>
+
+                    <a href="{{ url_for('edit', id=movie.id) }}" class="btn btn-primary btn-sm">Update</a>
+                    <a href="{{ url_for('delete', item_to_delete=movie.id) }}" class="btn btn-danger btn-sm">Delete</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    {% include "footer.html" %}

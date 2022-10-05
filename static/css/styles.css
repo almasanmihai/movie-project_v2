@@ -11297,7 +11297,7 @@ header.masthead .site-heading .h1 {
  .card {
 	 color: inherit;
 	 cursor: pointer;
-	 width: calc(33% - 3rem);
+	 width: 100%;
 	 min-width: calc(33% - 3rem);
 	 height: 400px;
 	 min-height: 400px;
@@ -11308,7 +11308,7 @@ header.masthead .site-heading .h1 {
 
  @media screen and (max-width: 1000px) {
 	 .card {
-		 width: calc(70% - 3rem);
+		 width: 100%;
 	}
 }
  @media screen and (max-width: 600px) {
