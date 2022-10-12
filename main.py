@@ -2,12 +2,13 @@ from flask import Flask, render_template, redirect, url_for, request, flash, abo
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 import requests
-from secret import key, token
-from forms import LoginForm, RegisterForm, RatingForm, AddForm
+from secret import key, token, mail_password
+from forms import LoginForm, RegisterForm, RatingForm, AddForm, ContactForm
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.exceptions import BadRequest
+import smtplib
 
 # --------------TMDB-------------------
 TMDB_API_KEY = key
@@ -124,9 +125,28 @@ def register():
     return render_template("register.html", form=form)
 
 
-@app.route("/contact")
+@app.route("/contact", methods=['GET', 'POST'])
 def contact():
-    return render_template("contact.html")
+    mail_adress = 'pythontest100days@gmail.com'
+    form = ContactForm()
+    if form.validate_on_submit():
+        email = form.email.data
+        name = form.name.data
+        phone = form.phone.data
+        message = form.message.data
+        print(email, name, phone, message)
+        try:
+            with smtplib.SMTP("smtp.gmail.com") as connection:
+                connection.starttls()
+                connection.login(user=mail_adress, password=mail_password)
+                connection.sendmail(from_addr=mail_adress, to_addrs="almasanmihai@yahoo.com",
+                                    msg=f"Subject: Message from Top 10 movies!\n\n{name}, email: {email}, phone: {phone}, sent you this message:\n{message}")
+        except smtplib.SMTPException:
+            flash("The connection to outgoing server failed")
+        else:
+            flash('Your message has been sent')
+        return redirect(url_for('home'))
+    return render_template("contact.html", form=form)
 
 
 @app.route("/logout")
@@ -239,5 +259,5 @@ def select():
 
 
 if __name__ == '__main__':
-    # app.run(host="0.0.0.0", port='5000')
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port='5000')
+    # app.run(debug=True)

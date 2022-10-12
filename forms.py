@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, FloatField
 from wtforms.validators import DataRequired, Email, NumberRange, Length
+from flask_ckeditor import CKEditorField
 
 
 ##WTForm
@@ -26,3 +27,11 @@ class RatingForm(FlaskForm):
 class AddForm(FlaskForm):
     title = StringField('Movie title', validators=[DataRequired()])
     submit = SubmitField('Search')
+
+
+class ContactForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired(), Length(min=2)])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    phone = FloatField('Phone', validators=[DataRequired()])
+    message = CKEditorField('Message', validators=[DataRequired()])
+    submit = SubmitField('Send')

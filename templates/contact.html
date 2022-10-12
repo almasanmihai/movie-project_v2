@@ -1,4 +1,5 @@
 {% include "header.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
 
 <!-- Page Header -->
 <header class="masthead"
@@ -9,56 +10,26 @@
             <div class="col-lg-8 col-md-10 mx-auto">
                 <div class="page-heading">
                     <h1>Contact Me</h1>
-                    <span class="subheading">Have questions? Hopefully I have answers.</span>
+                    <span class="subheading">Email me at <a href="mailto:almasanmihai@gmail.com" style="color:#90f5f0;">almasanmihai@gmail.com</a>, or fill up the form below</span>
                 </div>
             </div>
         </div>
     </div>
 </header>
 
-<!-- Main Content -->
 <div class="container">
     <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
-            <h5>Due to host limitations, sending messages from this page is not working for the moment. Email me at <a href="mailto:almasanmihai@gmail.com" style="color:blue;">almasanmihai@gmail.com</a></h5>
-
-            <!--            <form name="sentMessage" id="contactForm" novalidate method="post" action="{{ url_for('contact') }}">-->
-            <!--                <div class="control-group">-->
-            <!--                    <div class="form-group floating-label-form-group controls">-->
-            <!--                        <label>Name</label>-->
-            <!--                        <input type="text" class="form-control" placeholder="Name" id="name" required-->
-            <!--                               data-validation-required-message="Please enter your name." name="name">-->
-            <!--                        <p class="help-block text-danger"></p>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--                <div class="control-group">-->
-            <!--                    <div class="form-group floating-label-form-group controls">-->
-            <!--                        <label>Email Address</label>-->
-            <!--                        <input type="email" class="form-control" placeholder="Email Address" id="email" required-->
-            <!--                               data-validation-required-message="Please enter your email address." name="email">-->
-            <!--                        <p class="help-block text-danger"></p>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--                <div class="control-group">-->
-            <!--                    <div class="form-group col-xs-12 floating-label-form-group controls">-->
-            <!--                        <label>Phone Number</label>-->
-            <!--                        <input type="tel" class="form-control" placeholder="Phone Number" id="phone" required-->
-            <!--                               data-validation-required-message="Please enter your phone number." name="phone">-->
-            <!--                        <p class="help-block text-danger"></p>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--                <div class="control-group">-->
-            <!--                    <div class="form-group floating-label-form-group controls">-->
-            <!--                        <label>Message</label>-->
-            <!--                        <textarea rows="5" class="form-control" placeholder="Message" id="message" required-->
-            <!--                                  data-validation-required-message="Please enter a message." name="message"></textarea>-->
-            <!--                        <p class="help-block text-danger"></p>-->
-            <!--                    </div>-->
-            <!--                </div>-->
-            <!--                <br>-->
-            <!--                <div id="success"></div>-->
-            <!--                <button type="submit" class="btn btn-primary" id="sendMessageButton">Send</button>-->
-            <!--            </form>-->
+        <div class="col-lg-8 col-md-10 mx-auto content" style="color:red;">
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            {% for message in messages %}
+            <p>{{ message }}</p>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
+        <div class="col-lg-8 col-md-10 mx-auto content">
+            {{ wtf.quick_form(form, novalidate=True, button_map={"submit": "primary"}) }}
         </div>
     </div>
 </div>
