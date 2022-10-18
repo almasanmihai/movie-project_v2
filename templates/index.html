@@ -47,7 +47,7 @@
 </header>
 
 <!-- Main Content-->
-<div class="row">
+<div class="row justify-content-md-center">
     {% if current_user.is_authenticated %}
     {% if lenght > 0 %}
     <div class="container position-relative px-4 px-lg-5">
@@ -93,12 +93,13 @@
 
 {% if lenght > 10 %}
 <hr>
-<div class="row">
+<div class="row justify-content-md-center">
     <div class="container position-relative px-4 px-lg-5">
         <div class="site-heading" style="text-align: center;padding-top: 50px;padding-bottom: 20px;">
             <h3>Other titles you like</h3>
         </div>
     </div>
+
     {% endif %}
     {% endif %}
 
@@ -132,6 +133,7 @@
 
     {% endif %}
     {% endfor %}
-    {% endif %}
+</div>
+{% endif %}
 
-    {% include "footer.html" %}
+{% include "footer.html" %}
