@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, PasswordField, FloatField
-from wtforms.validators import DataRequired, Email, NumberRange, Length
+from wtforms.validators import DataRequired, Email, NumberRange, Length, EqualTo
 from flask_ckeditor import CKEditorField
 
 
@@ -32,6 +32,17 @@ class AddForm(FlaskForm):
 class ContactForm(FlaskForm):
     name = StringField('Name', validators=[DataRequired(), Length(min=2)])
     email = StringField('Email', validators=[DataRequired(), Email()])
-    phone = FloatField('Phone', validators=[DataRequired()])
+    phone = StringField('Phone (optional)')
     message = CKEditorField('Message', validators=[DataRequired()])
     submit = SubmitField('Send')
+
+
+class RequestResetForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    submit = SubmitField('Request Password Reset')
+
+
+class ResetPasswordForm(FlaskForm):
+    password = PasswordField("Password", validators=[DataRequired(), Length(min=6)])
+    confirm_password = PasswordField('Confirm Password', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Reset Password')

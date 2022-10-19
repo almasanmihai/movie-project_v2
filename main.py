@@ -2,17 +2,18 @@ from flask import Flask, render_template, redirect, url_for, request, flash, abo
 from flask_bootstrap import Bootstrap
 from flask_sqlalchemy import SQLAlchemy
 import requests
-from secret import key, token, mail_password
-from forms import LoginForm, RegisterForm, RatingForm, AddForm, ContactForm
+from secret import KEY, TOKEN, MAIL_PASSWORD, MAIL_ADDRESS
+from forms import LoginForm, RegisterForm, RatingForm, AddForm, ContactForm, RequestResetForm, ResetPasswordForm
 from flask_login import UserMixin, LoginManager, login_user, logout_user, login_required, current_user
 from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.exceptions import BadRequest
 import smtplib
+from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 
 # --------------TMDB-------------------
-TMDB_API_KEY = key
-TMDB_BEARER_TOKEN = token
+TMDB_API_KEY = KEY
+TMDB_BEARER_TOKEN = TOKEN
 
 header = {
     'Authorization': f'Bearer {TMDB_BEARER_TOKEN}',
@@ -53,6 +54,19 @@ class User(UserMixin, db.Model):
     name = db.Column(db.String(100))
     movie = relationship("Movie", back_populates="owner")
 
+    def get_reset_token(self, expires_sec=1800):
+        s = Serializer(app.config['SECRET_KEY'], expires_sec)
+        return s.dumps({'user_id': self.id}).decode('utf-8')
+
+    @staticmethod
+    def verify_reset_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            user_id = s.loads(token)['user_id']
+        except:
+            return None
+        return User.query.get(user_id)
+
 
 class Movie(db.Model):
     __tablename__ = 'movies'
@@ -90,7 +104,7 @@ def home():
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data).first()
+        user = User.query.filter_by(email=form.email.data.lower()).first()
         if not user:
             flash(f'User {form.email.data} does not exist. Please register instead.')
             return redirect(url_for('register'))
@@ -108,7 +122,7 @@ def login():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        new_email = form.email.data
+        new_email = form.email.data.lower()
         new_password = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=12)
         new_name = form.name.data
         user_exists = User.query.filter_by(email=new_email).first()
@@ -127,19 +141,17 @@ def register():
 
 @app.route("/contact", methods=['GET', 'POST'])
 def contact():
-    mail_adress = 'pythontest100days@gmail.com'
     form = ContactForm()
     if form.validate_on_submit():
         email = form.email.data
         name = form.name.data
         phone = form.phone.data
         message = form.message.data
-        print(email, name, phone, message)
         try:
             with smtplib.SMTP("smtp.gmail.com") as connection:
                 connection.starttls()
-                connection.login(user=mail_adress, password=mail_password)
-                connection.sendmail(from_addr=mail_adress, to_addrs="almasanmihai@yahoo.com",
+                connection.login(user=MAIL_ADDRESS, password=MAIL_PASSWORD)
+                connection.sendmail(from_addr=MAIL_ADDRESS, to_addrs="almasanmihai@yahoo.com",
                                     msg=f"Subject: Message from Top 10 movies!\n\n{name}, email: {email}, phone: {phone}, sent you this message:\n{message}")
         except smtplib.SMTPException:
             flash("The connection to outgoing server failed")
@@ -258,6 +270,62 @@ def select():
         return redirect(url_for('home'))
 
 
+def send_reset_email(user):
+    token = user.get_reset_token()
+    try:
+        with smtplib.SMTP("smtp.gmail.com") as connection:
+            connection.starttls()
+            connection.login(user=MAIL_ADDRESS, password=MAIL_PASSWORD)
+            connection.sendmail(from_addr=MAIL_ADDRESS, to_addrs=user.email,
+                                msg=f"Subject: Password Reset Request\n\nTo reset your password,"
+                                    f" visit the following link:\n\n"
+                                    f"{url_for('reset_token', token=token, _external=True)}\n\n"
+                                    f"If you did not make this request,"
+                                    f" then simply ignore this email and no changes will be made.")
+        return True
+    except smtplib.SMTPException:
+        return False
+
+
+@app.route("/reset_password", methods=['GET', 'POST'])
+def reset_request():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    form = RequestResetForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            success_sending_mail = send_reset_email(user)
+            if success_sending_mail:
+                flash('An email has been sent with instructions to reset your password.')
+                return redirect(url_for('login'))
+            else:
+                flash("The connection to outgoing server failed. Check your spelling and try again.")
+                return redirect(url_for('reset_request'))
+        else:
+            flash('This user does not exist. Check your spelling and try again.')
+            return redirect(url_for('reset_request'))
+    return render_template('reset_request.html', form=form)
+
+
+@app.route("/reset_password/<token>", methods=['GET', 'POST'])
+def reset_token(token):
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
+    user = User.verify_reset_token(token)
+    if not user:
+        flash('That is invalid or expired token')
+        return redirect(url_for('reset_request'))
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        new_password = generate_password_hash(form.password.data, method='pbkdf2:sha256', salt_length=12)
+        user.password = new_password
+        db.session.commit()
+        flash('Your password has been changed. You are now able to log in.')
+        return redirect(url_for('login'))
+    return render_template('reset_token.html', form=form)
+
+
 if __name__ == '__main__':
-    # app.run(host="0.0.0.0", port='5000')
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port='5000')
+    # app.run(debug=True)
